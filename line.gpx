@@ -7,8 +7,8 @@
 	</wpt>
 
 	<trk><name>door > tree > door</name><number>1</number><trkseg>
-		<trkpt lat="-37.9068" lon="145.1349"><ele>2376</ele><time>2007-10-14T10:09:57Z</time></trkpt>
-		<trkpt lat="-37.9068" lon="145.1350"><ele>2375</ele><time>2007-10-14T10:10:52Z</time></trkpt>
+		<trkpt lat="-37.9068" lon="145.1349"><time>2007-10-14T10:09:57Z</time></trkpt>
+		<trkpt lat="-37.9068" lon="145.1350"><time>2007-10-14T10:10:52Z</time></trkpt>
 	</trkseg></trk>
 
 </gpx>
