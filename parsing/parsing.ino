@@ -51,13 +51,36 @@ Adafruit_GPS GPS(&mySerial);
 boolean usingInterrupt = false;
 void useInterrupt(boolean); // Func prototype keeps Arduino 0023 happy
 
+String trackName = "";
+
 void setup()  
 {
     
   // connect at 115200 so we can read the GPS fast enough and echo without dropping chars
   // also spit it out
   Serial.begin(115200);
-  Serial.println("Adafruit GPS library basic test!");
+  Serial.println("-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-");
+  Serial.println("         GPS path tracker      ");
+  Serial.println("-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-");
+  Serial.println();
+  Serial.println();
+  Serial.println("Enter a track name: ");
+  while (trackName == "") {
+    if(Serial.available() > 0) {
+      trackName = Serial.readString();
+      Serial.println("track name is " + trackName);
+  }
+  Serial.println();
+  Serial.println();
+  Serial.println("///////////////////////////////");
+  Serial.println("<?xml version="1.0" encoding="UTF-8"?>");
+  Serial.println("<gpx version=\"1.0\">");
+  Serial.println("  <name>" + trackName + "</name>");
+  Serial.println("  <trk><name>" + trackName + "</name><number>1</number><trkseg>");
+  
+    
+                
+  }
 
   // 9600 NMEA is the default baud rate for Adafruit MTK GPS's- some use 4800
   GPS.begin(9600);
@@ -80,11 +103,11 @@ void setup()
   // the nice thing about this code is you can have a timer0 interrupt go off
   // every 1 millisecond, and read data from the GPS for you. that makes the
   // loop code a heck of a lot easier!
-  useInterrupt(true);
+  useInterrupt(false);
 
   delay(1000);
   // Ask for firmware version
-  mySerial.println(PMTK_Q_RELEASE);
+  //mySerial.println(PMTK_Q_RELEASE);
 }
 
 
@@ -145,31 +168,36 @@ void loop()                     // run over and over again
   if (millis() - timer > 2000) { 
     timer = millis(); // reset the timer
     
-    Serial.print("\nTime: ");
-    Serial.print(GPS.hour, DEC); Serial.print(':');
-    Serial.print(GPS.minute, DEC); Serial.print(':');
-    Serial.print(GPS.seconds, DEC); Serial.print('.');
-    Serial.println(GPS.milliseconds);
-    Serial.print("Date: ");
-    Serial.print(GPS.day, DEC); Serial.print('/');
-    Serial.print(GPS.month, DEC); Serial.print("/20");
-    Serial.println(GPS.year, DEC);
-    Serial.print("Fix: "); Serial.print((int)GPS.fix);
-    Serial.print(" quality: "); Serial.println((int)GPS.fixquality); 
-    if (GPS.fix) {
-      Serial.print("Location: ");
-      Serial.print(GPS.latitude, 4); Serial.print(GPS.lat);
-      Serial.print(", "); 
-      Serial.print(GPS.longitude, 4); Serial.println(GPS.lon);
-      Serial.print("Location (in degrees, works with Google Maps): ");
-      Serial.print(GPS.latitudeDegrees, 4);
-      Serial.print(", "); 
-      Serial.println(GPS.longitudeDegrees, 4);
-      
-      Serial.print("Speed (knots): "); Serial.println(GPS.speed);
-      Serial.print("Angle: "); Serial.println(GPS.angle);
-      Serial.print("Altitude: "); Serial.println(GPS.altitude);
-      Serial.print("Satellites: "); Serial.println((int)GPS.satellites);
-    }
+//    Serial.print("\nTime: ");
+//    Serial.print(GPS.hour, DEC); Serial.print(':');
+//    Serial.print(GPS.minute, DEC); Serial.print(':');
+//    Serial.print(GPS.seconds, DEC); Serial.print('.');
+//    Serial.println(GPS.milliseconds);
+//    Serial.print("Date: ");
+//    Serial.print(GPS.day, DEC); Serial.print('/');
+//    Serial.print(GPS.month, DEC); Serial.print("/20");
+//    Serial.println(GPS.year, DEC);
+//    Serial.print("Fix: "); Serial.print((int)GPS.fix);
+//    Serial.print(" quality: "); Serial.println((int)GPS.fixquality); 
+//    if (GPS.fix) {
+//      Serial.print("Location: ");
+//      Serial.print(GPS.latitude, 4); Serial.print(GPS.lat);
+//      Serial.print(", "); 
+//      Serial.print(GPS.longitude, 4); Serial.println(GPS.lon);
+//      Serial.print("Location (in degrees, works with Google Maps): ");
+//      Serial.print(GPS.latitudeDegrees, 4);
+//      Serial.print(", "); 
+//      Serial.println(GPS.longitudeDegrees, 4);
+//      
+//      Serial.print("Speed (knots): "); Serial.println(GPS.speed);
+//      Serial.print("Angle: "); Serial.println(GPS.angle);
+//      Serial.print("Altitude: "); Serial.println(GPS.altitude);
+//      Serial.print("Satellites: "); Serial.println((int)GPS.satellites);
+//    }
+
+  Serial.println("  <trkpt lat='" + GPS.latitudeDegrees + "' lon='" + GPS.longitudeDegrees + "'></trkpt>", 4);
+
+
   }
 }
+
