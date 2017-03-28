@@ -7,8 +7,53 @@
 	</wpt>
 
 	<trk><name>door > tree > door</name><number>1</number><trkseg>
-		<trkpt lat="-37.9068" lon="145.1349"><time>2007-10-14T10:09:57Z</time></trkpt>
-		<trkpt lat="-37.9068" lon="145.1350"><time>2007-10-14T10:10:52Z</time></trkpt>
+		<trkpt lat='-37.9068' lon='145.1345'></trkpt>
+		<trkpt lat='-37.9068' lon='145.1344'></trkpt>
+		<trkpt lat='-37.9068' lon='145.1345'></trkpt>
+		<trkpt lat='-37.9068' lon='145.1345'></trkpt>
+		<trkpt lat='-37.9068' lon='145.1346'></trkpt>
+		<trkpt lat='-37.9068' lon='145.1346'></trkpt>
+		<trkpt lat='-37.9068' lon='145.1346'></trkpt>
+		<trkpt lat='-37.9068' lon='145.1347'></trkpt>
+		<trkpt lat='-37.9068' lon='145.1347'></trkpt>
+		<trkpt lat='-37.9068' lon='145.1347'></trkpt>
+		<trkpt lat='-37.9068' lon='145.1347'></trkpt>
+		<trkpt lat='-37.9068' lon='145.1348'></trkpt>
+		<trkpt lat='-37.9068' lon='145.1348'></trkpt>
+		<trkpt lat='-37.9068' lon='145.1348'></trkpt>
+		<trkpt lat='-37.9068' lon='145.1349'></trkpt>
+		<trkpt lat='-37.9068' lon='145.1349'></trkpt>
+		<trkpt lat='-37.9068' lon='145.1349'></trkpt>
+		<trkpt lat='-37.9068' lon='145.135'></trkpt>
+		<trkpt lat='-37.9068' lon='145.135'></trkpt>
+		<trkpt lat='-37.9068' lon='145.135'></trkpt>
+		<trkpt lat='-37.9068' lon='145.135'></trkpt>
+		<trkpt lat='-37.9068' lon='145.1351'></trkpt>
+		<trkpt lat='-37.9068' lon='145.1351'></trkpt>
+		<trkpt lat='-37.9068' lon='145.1351'></trkpt>
+		<trkpt lat='-37.9068' lon='145.1351'></trkpt>
+		<trkpt lat='-37.9068' lon='145.135'></trkpt>
+		<trkpt lat='-37.9068' lon='145.135'></trkpt>
+		<trkpt lat='-37.9068' lon='145.135'></trkpt>
+		<trkpt lat='-37.9068' lon='145.135'></trkpt>
+		<trkpt lat='-37.9068' lon='145.1349'></trkpt>
+		<trkpt lat='-37.9068' lon='145.1349'></trkpt>
+		<trkpt lat='-37.9068' lon='145.1349'></trkpt>
+		<trkpt lat='-37.9068' lon='145.1348'></trkpt>
+		<trkpt lat='-37.9068' lon='145.1348'></trkpt>
+		<trkpt lat='-37.9068' lon='145.1348'></trkpt>
+		<trkpt lat='-37.9068' lon='145.1347'></trkpt>
+		<trkpt lat='-37.9068' lon='145.1347'></trkpt>
+		<trkpt lat='-37.9068' lon='145.1347'></trkpt>
+		<trkpt lat='-37.9068' lon='145.1347'></trkpt>
+		<trkpt lat='-37.9068' lon='145.1346'></trkpt>
+		<trkpt lat='-37.9068' lon='145.1346'></trkpt>
+		<trkpt lat='-37.9068' lon='145.1345'></trkpt>
+		<trkpt lat='-37.9068' lon='145.1345'></trkpt>
+		<trkpt lat='-37.9068' lon='145.1345'></trkpt>
+		<trkpt lat='-37.9068' lon='145.1345'></trkpt>
+		<trkpt lat='-37.9068' lon='145.1345'></trkpt>
+
 	</trkseg></trk>
 
 </gpx>
