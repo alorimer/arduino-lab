@@ -76,17 +76,17 @@ void loop() {
     if (GPS.fix) {
       Serial.println("    <trkpt lat='" + String(GPS.latitudeDegrees, 6) + "' lon='" + String(GPS.longitudeDegrees, 6) + "'></trkpt>");
        digitalWrite(8, LOW);
-      if ((latLine - 0.000100) < GPS.latitudeDegrees < latLine + 0.000010) {
+      if (latLine == GPS.latitudeDegrees) {
         digitalWrite(5, LOW);
         digitalWrite(6, HIGH);
         digitalWrite(7, LOW);
       }
-      else if (GPS.latitudeDegrees < latLine - 0.000010) {
+      else if (GPS.latitudeDegrees < latLine) {
         digitalWrite(5, HIGH);
         digitalWrite(6, LOW);
         digitalWrite(7, LOW);
       }
-      else if (GPS.latitudeDegrees > latLine + 0.000010) {
+      else if (GPS.latitudeDegrees > latLine) {
          digitalWrite(5, LOW);
         digitalWrite(6, LOW);
         digitalWrite(7, HIGH);
