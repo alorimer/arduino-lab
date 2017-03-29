@@ -5,37 +5,41 @@ SoftwareSerial mySerial(3, 2);
 Adafruit_GPS GPS(&mySerial); // GPS object called GPS
 #define GPSECHO  false // raw sentences
 
+int latLine = -37.906877;
+int lonLine;
+
 boolean usingInterrupt = true;
 void useInterrupt(boolean); // Func prototype keeps Arduino 0023 happy
 
 void setup() {
-    
+
+  // initialisation
   Serial.begin(115200);
   GPS.begin(9600);
+
   GPS.sendCommand(PMTK_SET_NMEA_OUTPUT_RMCGGA); // minimum output + GGA (fix data)
   //GPS.sendCommand(PMTK_SET_NMEA_OUTPUT_RMCONLY); // minimum output
-  
   GPS.sendCommand(PMTK_SET_NMEA_UPDATE_1HZ);   // 1 Hz update rate
-
-  // Request updates on antenna status, comment out to keep quiet
-  //GPS.sendCommand(PGCMD_ANTENNA);
 
   // the nice thing about this code is you can have a timer0 interrupt go off
   // every 1 millisecond, and read data from the GPS for you. that makes the
   // loop code a heck of a lot easier!
   useInterrupt(true);
 
-  pinMode(5, OUTPUT);
-  pinMode(6, OUTPUT);
-  pinMode(7, OUTPUT);
-  pinMode(8, OUTPUT);
-
   for(int i=5; i<=8; i++) { pinMode(i, OUTPUT); } // set led pins
 
+  // print init
+  Serial.println("\n --");
+  Serial.println("<?xml version='1.0' encoding='UTF-8'?>");
+  Serial.println("<gpx version='1.0'>");
+  Serial.println("  <name>test file</name>");
+  Serial.println("  <trk><name>test track</name><number>1</number><trkseg>");
+
   delay(1000);
-  // Ask for firmware version
-  //mySerial.println(PMTK_Q_RELEASE);
 }
+
+
+
 
 
 // Interrupt is called once a millisecond, looks for any new GPS data, and stores it
@@ -65,6 +69,11 @@ void useInterrupt(boolean v) {
 }
 
 uint32_t timer = millis();
+
+
+
+
+
 void loop()                     // run over and over again
 {
   // in case you are not using the interrupt above, you'll
@@ -91,23 +100,22 @@ void loop()                     // run over and over again
   // if millis() or timer wraps around, we'll just reset it
   if (timer > millis())  timer = millis();
 
-  // approximately every 2 seconds or so, print out the current stats
-  if (millis() - timer > 2000) { 
+  if (millis() - timer > 1000) { 
     timer = millis(); // reset the timer
     if (GPS.fix) {
-      Serial.println("  <trkpt lat='" + String(GPS.latitudeDegrees, 6) + "' lon='" + String(GPS.longitudeDegrees, 6) + "'></trkpt>");
+      Serial.println("    <trkpt lat='" + String(GPS.latitudeDegrees, 6) + "' lon='" + String(GPS.longitudeDegrees, 6) + "'></trkpt>");
        digitalWrite(8, LOW);
-      if (GPS.latitudeDegrees == -37.9068) {
+      if (GPS.latitudeDegrees == latLine) {
         digitalWrite(5, LOW);
         digitalWrite(6, HIGH);
         digitalWrite(7, LOW);
       }
-      else if (GPS.latitudeDegrees < -37.9068) {
+      else if (GPS.latitudeDegrees < latLine) {
         digitalWrite(5, HIGH);
         digitalWrite(6, LOW);
         digitalWrite(7, LOW);
       }
-      else if (GPS.latitudeDegrees > -37.9068) {
+      else if (GPS.latitudeDegrees > latLine) {
          digitalWrite(5, LOW);
         digitalWrite(6, LOW);
         digitalWrite(7, HIGH);
