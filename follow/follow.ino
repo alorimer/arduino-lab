@@ -1,12 +1,21 @@
 #include <Adafruit_GPS.h>
-#include <SoftwareSerial.h>
 
-SoftwareSerial mySerial(3, 2);
+#ifdef UNO_DEBUG
+  #include <SoftwareSerial.h>
+  SoftwareSerial mySerial(3, 2);
+#endif
+#ifdef ATtiny85
+  #include <SendOnlySoftwareSerial.h>
+  SoftwareSerial mySerial(4, 100);
+#endif
+  
 Adafruit_GPS GPS(&mySerial); // GPS object called GPS
 #define GPSECHO  false // raw sentences
 
 float latLine = -37.906877;
 float lonLine;
+
+int nthPin, sthPin, centrePin, fixPin, txPin;
 
 boolean usingInterrupt = true;
 void useInterrupt(boolean); // Func prototype keeps Arduino 0023 happy
@@ -14,26 +23,46 @@ void useInterrupt(boolean); // Func prototype keeps Arduino 0023 happy
 void setup() {
 
   // initialisation
-  Serial.begin(115200);
+
+  #ifdef UNO_DEBUG
+    Serial.begin(115200);
+    sthPin = 5;
+    centrePin = 6;
+    nthPin = 7;
+    fixPin = 8;
+    //GPS.sendCommand(PMTK_SET_NMEA_OUTPUT_RMCGGA); // minimum output + GGA (fix data)
+    GPS.sendCommand(PMTK_SET_NMEA_OUTPUT_RMCONLY); // minimum output
+    GPS.sendCommand(PMTK_SET_NMEA_UPDATE_1HZ);   // 1 Hz update rate
+
+    // print init
+    Serial.println("\n --");
+    Serial.println("<?xml version='1.0' encoding='UTF-8'?>");
+    Serial.println("<gpx version='1.0'>");
+    Serial.println("  <name>test file</name>");
+    Serial.println("  <trk><name>test track</name><number>1</number><trkseg>");
+  #endif
+  #ifdef ATtiny85
+    sthPin = 0;
+    centrePin = 1;
+    nthPin = 2;
+    fixPin = 3;
+  #endif
+
+  pinMode(sthPin, OUTPUT);
+  pinMode(centrePin, OUTPUT);
+  pinMode(nthPin, OUTPUT);
+  pinMode(fixPin, OUTPUT);
+  
   GPS.begin(9600);
 
-  //GPS.sendCommand(PMTK_SET_NMEA_OUTPUT_RMCGGA); // minimum output + GGA (fix data)
-  GPS.sendCommand(PMTK_SET_NMEA_OUTPUT_RMCONLY); // minimum output
-  GPS.sendCommand(PMTK_SET_NMEA_UPDATE_1HZ);   // 1 Hz update rate
+  
 
   // the nice thing about this code is you can have a timer0 interrupt go off
   // every 1 millisecond, and read data from the GPS for you. that makes the
   // loop code a heck of a lot easier!
   useInterrupt(true);
 
-  for(int i=5; i<=8; i++) { pinMode(i, OUTPUT); } // set led pins
-
-  // print init
-  Serial.println("\n --");
-  Serial.println("<?xml version='1.0' encoding='UTF-8'?>");
-  Serial.println("<gpx version='1.0'>");
-  Serial.println("  <name>test file</name>");
-  Serial.println("  <trk><name>test track</name><number>1</number><trkseg>");
+  
 
   delay(1000);
 }
@@ -74,30 +103,33 @@ void loop() {
   if (millis() - timer > 1000) { 
     timer = millis(); // reset the timer
     if (GPS.fix) {
-      Serial.println("    <trkpt lat='" + String(GPS.latitudeDegrees, 6) + "' lon='" + String(GPS.longitudeDegrees, 6) + "'></trkpt>");
-       digitalWrite(8, LOW);
+      #ifdef UNO_DEBUG
+        Serial.println("    <trkpt lat='" + String(GPS.latitudeDegrees, 6) + "' lon='" + String(GPS.longitudeDegrees, 6) + "'></trkpt>"); 
+      #endif
+       digitalWrite(fixPin, HIGH);
       if (latLine == GPS.latitudeDegrees) {
-        digitalWrite(5, LOW);
-        digitalWrite(6, HIGH);
-        digitalWrite(7, LOW);
+        
+        digitalWrite(sthPin, LOW);
+        digitalWrite(centrePin, HIGH);
+        digitalWrite(nthPin, LOW);
       }
       else if (GPS.latitudeDegrees < latLine) {
-        digitalWrite(5, HIGH);
-        digitalWrite(6, LOW);
-        digitalWrite(7, LOW);
+        digitalWrite(sthPin, HIGH);
+        digitalWrite(centrePin, LOW);
+        digitalWrite(nthPin, LOW);
       }
       else if (GPS.latitudeDegrees > latLine) {
-         digitalWrite(5, LOW);
-        digitalWrite(6, LOW);
-        digitalWrite(7, HIGH);
+         digitalWrite(sthPin, LOW);
+        digitalWrite(centrePin, LOW);
+        digitalWrite(nthPin, HIGH);
       }
       
     }
     else {
-      digitalWrite(8, HIGH);
-      digitalWrite(5, LOW);
-      digitalWrite(6, LOW);
-      digitalWrite(7, LOW);
+      digitalWrite(fixPin, LOW);
+      digitalWrite(sthPin, LOW);
+      digitalWrite(centrePin, LOW);
+      digitalWrite(nthPin, LOW);
     }
   }
 }

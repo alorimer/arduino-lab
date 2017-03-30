@@ -15,7 +15,12 @@ void useInterrupt(boolean); // Func prototype keeps Arduino 0023 happy
 void setup() {
 
   // initialisation
-  Serial.begin(115200);
+  #ifdef UNO_DEBUG
+    Serial.begin(115200);
+  #endif  
+  #ifdef AVR_ATtiny85
+    Serial.begin(9600);
+  #endif  
   GPS.begin(9600);
 
   //GPS.sendCommand(PMTK_SET_NMEA_OUTPUT_RMCGGA); // minimum output + GGA (fix data)
@@ -28,6 +33,7 @@ void setup() {
   useInterrupt(true);
 
   for(int i=0; i<=3; i++) { pinMode(i, OUTPUT); } // set led pins
+  pinMode(4, INPUT);
 
   delay(1000);
 }
@@ -68,30 +74,29 @@ void loop() {
   if (millis() - timer > 1000) { 
     timer = millis(); // reset the timer
     if (GPS.fix) {
-      Serial.println("    <trkpt lat='" + String(GPS.latitudeDegrees, 6) + "' lon='" + String(GPS.longitudeDegrees, 6) + "'></trkpt>");
        digitalWrite(8, LOW);
       if (latLine == GPS.latitudeDegrees) {
-        digitalWrite(5, LOW);
-        digitalWrite(6, HIGH);
-        digitalWrite(7, LOW);
+        digitalWrite(0, LOW);
+        digitalWrite(1, HIGH);
+        digitalWrite(2, LOW);
       }
       else if (GPS.latitudeDegrees < latLine) {
-        digitalWrite(5, HIGH);
-        digitalWrite(6, LOW);
-        digitalWrite(7, LOW);
+        digitalWrite(0, HIGH);
+        digitalWrite(1, LOW);
+        digitalWrite(2, LOW);
       }
       else if (GPS.latitudeDegrees > latLine) {
-         digitalWrite(5, LOW);
-        digitalWrite(6, LOW);
-        digitalWrite(7, HIGH);
+        digitalWrite(0, LOW);
+        digitalWrite(1, LOW);
+        digitalWrite(2, HIGH);
       }
       
     }
     else {
-      digitalWrite(8, HIGH);
-      digitalWrite(5, LOW);
-      digitalWrite(6, LOW);
-      digitalWrite(7, LOW);
+      digitalWrite(3, HIGH);
+      digitalWrite(0, LOW);
+      digitalWrite(1, LOW);
+      digitalWrite(2, LOW);
     }
   }
 }
