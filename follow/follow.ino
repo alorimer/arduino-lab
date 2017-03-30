@@ -1,27 +1,26 @@
-#define __AVR_ATtiny85__
-
-
-#include <Adafruit_GPS.h>
+#include <SoftwareSerial.h>
+#include "Adafruit_GPS.h"
 
 #ifdef __AVR_ATmega328P__
-  #include <SoftwareSerial.h>
   SoftwareSerial mySerial(3, 2);
 #elif defined(__AVR_ATtiny85__)
-  #include <SendOnlySoftwareSerial.h>
-  SoftwareSerial mySerial(4, 100);
+  SoftwareSerial mySerial(3, 4);
+#else
+  #error "invalid board.. must be Uno ISP or ATtiny85"
 #endif
-  
+
 Adafruit_GPS GPS(&mySerial); // GPS object called GPS
 #define GPSECHO  false // raw sentences
 
 float latLine = -37.906877;
-float lonLine;
 
-int nthPin, sthPin, centrePin, fixPin, txPin;
+int nthPin, sthPin, centrePin;
 
 boolean usingInterrupt = true;
 void useInterrupt(boolean); // Func prototype keeps Arduino 0023 happy
 
+///////////////////////////////////
+        
 void setup() {
 
   // initialisation
@@ -31,10 +30,9 @@ void setup() {
     sthPin = 5;
     centrePin = 6;
     nthPin = 7;
-    fixPin = 8;
     //GPS.sendCommand(PMTK_SET_NMEA_OUTPUT_RMCGGA); // minimum output + GGA (fix data)
-    //GPS.sendCommand(PMTK_SET_NMEA_OUTPUT_RMCONLY); // minimum output
-    //GPS.sendCommand(PMTK_SET_NMEA_UPDATE_1HZ);   // 1 Hz update rate
+    GPS.sendCommand(PMTK_SET_NMEA_OUTPUT_RMCONLY); // minimum output
+    GPS.sendCommand(PMTK_SET_NMEA_UPDATE_1HZ);   // 1 Hz update rate
 
     // print init
     Serial.println("\n --");
@@ -46,7 +44,6 @@ void setup() {
     sthPin = 0;
     centrePin = 1;
     nthPin = 2;
-    fixPin = 3;
   #else
     Incompatible processor!
   #endif
@@ -54,7 +51,6 @@ void setup() {
   pinMode(sthPin, OUTPUT);
   pinMode(centrePin, OUTPUT);
   pinMode(nthPin, OUTPUT);
-  pinMode(fixPin, OUTPUT);
   
   GPS.begin(9600);
 
@@ -82,11 +78,20 @@ void useInterrupt(boolean v) {
     // Timer0 is already used for millis() - we'll just interrupt somewhere
     // in the middle and call the "Compare A" function above
     OCR0A = 0xAF;
-    TIMSK0 |= _BV(OCIE0A);
+    #ifdef __AVR_ATmega328P__
+      TIMSK0 |= _BV(OCIE0A);
+    #elif defined(__AVR_ATtiny85__)
+      TIMSK |= _BV(OCIE0A);
+    #endif
+    
     usingInterrupt = true;
   } else {
     // do not call the interrupt function COMPA anymore
-    TIMSK0 &= ~_BV(OCIE0A);
+    #ifdef __AVR_ATmega328P__
+      TIMSK0 &= ~_BV(OCIE0A);
+    #elif defined(__AVR_ATtiny85__)
+      TIMSK &= ~_BV(OCIE0A);
+    #endif
     usingInterrupt = false;
   }
 }
@@ -109,7 +114,6 @@ void loop() {
       #ifdef __AVR_ATmega328P__
         Serial.println("    <trkpt lat='" + String(GPS.latitudeDegrees, 6) + "' lon='" + String(GPS.longitudeDegrees, 6) + "'></trkpt>"); 
       #endif
-       digitalWrite(fixPin, HIGH);
       if (latLine == GPS.latitudeDegrees) {
         
         digitalWrite(sthPin, LOW);
@@ -129,7 +133,6 @@ void loop() {
       
     }
     else {
-      digitalWrite(fixPin, LOW);
       digitalWrite(sthPin, LOW);
       digitalWrite(centrePin, LOW);
       digitalWrite(nthPin, LOW);
