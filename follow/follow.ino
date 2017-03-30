@@ -1,10 +1,12 @@
+#define __AVR_ATtiny85__
+
+
 #include <Adafruit_GPS.h>
 
-#ifdef UNO_DEBUG
+#ifdef __AVR_ATmega328P__
   #include <SoftwareSerial.h>
   SoftwareSerial mySerial(3, 2);
-#endif
-#ifdef ATtiny85
+#elif defined(__AVR_ATtiny85__)
   #include <SendOnlySoftwareSerial.h>
   SoftwareSerial mySerial(4, 100);
 #endif
@@ -24,15 +26,15 @@ void setup() {
 
   // initialisation
 
-  #ifdef UNO_DEBUG
+  #ifdef __AVR_ATmega328P__
     Serial.begin(115200);
     sthPin = 5;
     centrePin = 6;
     nthPin = 7;
     fixPin = 8;
     //GPS.sendCommand(PMTK_SET_NMEA_OUTPUT_RMCGGA); // minimum output + GGA (fix data)
-    GPS.sendCommand(PMTK_SET_NMEA_OUTPUT_RMCONLY); // minimum output
-    GPS.sendCommand(PMTK_SET_NMEA_UPDATE_1HZ);   // 1 Hz update rate
+    //GPS.sendCommand(PMTK_SET_NMEA_OUTPUT_RMCONLY); // minimum output
+    //GPS.sendCommand(PMTK_SET_NMEA_UPDATE_1HZ);   // 1 Hz update rate
 
     // print init
     Serial.println("\n --");
@@ -40,12 +42,13 @@ void setup() {
     Serial.println("<gpx version='1.0'>");
     Serial.println("  <name>test file</name>");
     Serial.println("  <trk><name>test track</name><number>1</number><trkseg>");
-  #endif
-  #ifdef ATtiny85
+  #elif defined(__AVR_ATtiny85__)
     sthPin = 0;
     centrePin = 1;
     nthPin = 2;
     fixPin = 3;
+  #else
+    Incompatible processor!
   #endif
 
   pinMode(sthPin, OUTPUT);
@@ -103,7 +106,7 @@ void loop() {
   if (millis() - timer > 1000) { 
     timer = millis(); // reset the timer
     if (GPS.fix) {
-      #ifdef UNO_DEBUG
+      #ifdef __AVR_ATmega328P__
         Serial.println("    <trkpt lat='" + String(GPS.latitudeDegrees, 6) + "' lon='" + String(GPS.longitudeDegrees, 6) + "'></trkpt>"); 
       #endif
        digitalWrite(fixPin, HIGH);
