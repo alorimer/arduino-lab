@@ -40,8 +40,8 @@ IPAddress myDns(8, 8, 8, 8);
 // initialize the library instance:
 EthernetClient client;
 
-char server[] = "lorimer.id.au";
-//IPAddress server(64,131,82,241);
+char server[] = "arduino.lorimer.id.au";
+//IPAddress server(117,55,235,26);
 
 unsigned long lastConnectionTime = 0;             // last time you connected to the server, in milliseconds
 const unsigned long postingInterval = 10L * 1000L; // delay between updates, in milliseconds
@@ -91,8 +91,8 @@ void httpRequest() {
   if (client.connect(server, 80)) {
     Serial.println("connecting...");
     // send the HTTP GET request:
-    client.println("GET /latest.txt HTTP/1.1");
-    client.println("Host: www.arduino.cc");
+    client.println("GET /index.html HTTP/1.1");
+    client.print("Host: ");      client.println(server);
     client.println("User-Agent: arduino-ethernet");
     client.println("Connection: close");
     client.println();
